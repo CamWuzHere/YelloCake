@@ -1,0 +1,28 @@
+Package: YelloCake
+Version: 1.2.4y
+Architecture: all
+Maintainer: CamWuzHere <you@example.com>
+Installed-Size: 36
+Filename: ./YelloCake_1.2.4y_all.deb
+Size: 5782
+MD5sum: ebe40583c517b71f29e6d543b5395e4f
+SHA1: 1a713c335413f02c551f830dc470dd2d78f745a0
+SHA256: 356eaa1c581b479cee4ba329a671e1d00606db012d4d5a6c1dc00dc38c311ee9
+Section: utils
+Priority: optional
+Description: YelloCake shell configuration for a colorful, customized bash experience
+
+Package: yellocake
+Version: 1.1.8
+Architecture: all
+Maintainer: CamWuzHere <you@example.com>
+Installed-Size: 28
+Filename: ./yellocake_1.1.8_all.deb
+Size: 3928
+MD5sum: b4c946c7ea2a6dad147b73d3f0bd9357
+SHA1: 10a5c48d2695546fec20539320c2b8255fa6b8dc
+SHA256: 33ec7faff6e79c2cdfbc7177039a3ee9c0631d4a270139f493437ed37d22df38
+Section: utils
+Priority: optional
+Description: YelloCake shell configuration for a colorful, customized bash experience
+
