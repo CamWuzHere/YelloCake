@@ -10,19 +10,4 @@ SHA1: 662e0bec468e7e46c4bd7a933d3cfb151dd20516
 SHA256: 12f934d4aa83f0da9234f9a3b443e81a33559634b95d03285f056d724f6d9514
 Section: utils
 Priority: optional
-Description: YelloCake shell configuration for a colorful, customized bash experience
-
-Package: yellocake
-Version: 1.1.8
-Architecture: all
-Maintainer: CamWuzHere <you@example.com>
-Installed-Size: 28
-Filename: ./yellocake_1.1.8_all.deb
-Size: 3928
-MD5sum: b4c946c7ea2a6dad147b73d3f0bd9357
-SHA1: 10a5c48d2695546fec20539320c2b8255fa6b8dc
-SHA256: 33ec7faff6e79c2cdfbc7177039a3ee9c0631d4a270139f493437ed37d22df38
-Section: utils
-Priority: optional
-Description: YelloCake shell configuration for a colorful, customized bash experience
-
+Description: YelloCake is just a fucking package. leave it at that. it makes it easier to use linux, and it just looked cool ig.
