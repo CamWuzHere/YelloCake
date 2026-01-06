@@ -1,0 +1,72 @@
+#!/bin/bash
+set -euo pipefail
+
+update_shell_rc() {
+    local user="$1"
+    local home="$2"
+
+    # Create config.sh beside .bashrc
+    CONFIG_FILE="$home/config.sh"
+    cat > "$CONFIG_FILE" <<'EOF'
+#!/bin/bash
+# YelloCake config.sh auto-generated
+
+fade() {
+    local colors=("#000000" "#222222" "#444444" "#666666" "#888888" "#AAAAAA" "#CCCCCC" "#FFFFFF")
+    while true; do
+        # Fade in: dark → white
+        for c in "${colors[@]}"; do
+            if [ "$c" == "#000000" ]; then
+                printf "\e[?25l"    # hide cursor
+            else
+                printf "\e]12;${c}\a\e[?25h"  # set color + show cursor
+            fi
+            sleep 0.065
+        done
+
+        # Fade out: white → dark
+        for ((i=${#colors[@]}-1; i>=0; i--)); do
+            c="${colors[i]}"
+            if [ "$c" == "#000000" ]; then
+                printf "\e[?25l"    # hide cursor
+            else
+                printf "\e]12;${c}\a\e[?25h"  # set color + show cursor
+            fi
+            sleep 0.065
+        done
+    done
+}
+
+fade &
+EOF
+
+    chown "$user:$user" "$CONFIG_FILE"
+    chmod 755 "$CONFIG_FILE"
+
+    # Source it in bashrc/zshrc
+    local shells=( ".bashrc" ".zshrc" )
+    for rc in "${shells[@]}"; do
+        local rc_file="$home/$rc"
+        if [ -f "$rc_file" ]; then
+            if ! grep -Fxq "source ~/config.sh" "$rc_file"; then
+                echo "" >> "$rc_file"
+                echo "source ~/config.sh" >> "$rc_file"
+                chown "$user:$user" "$rc_file"
+            fi
+        fi
+    done
+}
+
+# Apply to all regular users + root
+while IFS=: read -r username _ uid _ _ home _; do
+    if [ "$uid" -ge 1000 ] || [ "$username" == "root" ]; then
+        if [ -d "$home" ] && [ -w "$home" ]; then
+            update_shell_rc "$username" "$home"
+        else
+            echo "WARNING: Skipping user '$username', home '$home' missing or not writable" >&2
+        fi
+    fi
+done < /etc/passwd
+
+echo "✔ YelloCake post-install configuration complete"
+exit 0

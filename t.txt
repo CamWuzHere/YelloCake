@@ -1,0 +1,35 @@
+urupt() {
+    echo -e "\e[1;33mChecking for Uranium updates...\e[0m"
+
+    # Update package
+    if [ "$EUID" -ne 0 ]; then
+        sudo apt update
+        sudo apt install --only-upgrade uranium
+    else
+        apt update
+        apt install --only-upgrade uranium
+    fi
+
+    # Auto-update config (optional)
+    CONFIG_URL="https://camwuzhere.github.io/Uranium/debs/ ./"   # Replace with your hosted config
+    LOCAL_CONFIG="$HOME/.uraniumrc"
+    BACKUP_CONFIG="$HOME/.uraniumrc.bak"
+
+    echo -e "\e[1;33mChecking for config updates...\e[0m"
+
+    # Download temp version
+    TMP_CONFIG=$(mktemp)
+    curl -fsSL "$CONFIG_URL" -o "$TMP_CONFIG"
+
+    # Compare with local version
+    if ! cmp -s "$TMP_CONFIG" "$LOCAL_CONFIG"; then
+        echo -e "\e[1;34mNew config found! Backing up old config...\e[0m"
+        cp "$LOCAL_CONFIG" "$BACKUP_CONFIG"
+        cp "$TMP_CONFIG" "$LOCAL_CONFIG"
+        echo -e "\e[1;32mConfig updated successfully! Backup at $BACKUP_CONFIG\e[0m"
+    else
+        echo -e "\e[1;32mYour config is already up-to-date.\e[0m"
+    fi
+
+    rm "$TMP_CONFIG"
+}

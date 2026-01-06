@@ -1,0 +1,25 @@
+#!/bin/bash
+set -euo pipefail
+
+remove_from_shell_rc() {
+    local rc_file="$1"
+    if [ -f "$rc_file" ]; then
+        sed -i '/source ~\/config\.sh/d' "$rc_file"
+    fi
+}
+
+# Cleanup for all regular users + root
+while IFS=: read -r username _ uid _ _ home _; do
+    if [ "$uid" -ge 1000 ] || [ "$username" == "root" ]; then
+        if [ -d "$home" ] && [ -w "$home" ]; then
+            remove_from_shell_rc "$home/.bashrc"
+            remove_from_shell_rc "$home/.zshrc"
+            rm -f "$home/config.sh"
+        else
+            echo "WARNING: Skipping user '$username', home '$home' missing or not writable" >&2
+        fi
+    fi
+done
+
+echo "✔ YelloCake cleanup complete"
+exit 0
