@@ -57,9 +57,9 @@ username_prompt() {
 # Function to set the color for the prompt symbol
 prompt_symbol_color() {
     if [ "$USER" = "root" ]; then
-        echo "\[\e[32m\]"   # green for root
+        echo "\[\e[32m\]❮*❯"   # green for root
     else
-        echo "\[\e[31m\]"   # red for normal user
+        echo "\[\e[31m\]❮~❯"   # red for normal user
     fi
 }
 
@@ -121,6 +121,437 @@ alias vew='less'
 
 
 # Functions
+# bash
+bs() { bash "$@"; }
+bsv() { bash --version; }
+bsi() { bash -i "$@"; }
+bse() { bash -c "$@"; }
+bsr() { source "$@"; }
+bsx() { bash -x "$@"; }
+bsl() { bash -l "$@"; }
+bss() { bash --login "$@"; }
+bsa() { alias "$@"; }
+bsh() { help "$@"; }
+
+# zsh
+zh() { zsh "$@"; }
+zhv() { zsh --version; }
+zhi() { zsh -i "$@"; }
+zhc() { zsh -c "$@"; }
+zhr() { source "$@"; }
+zhx() { zsh -x "$@"; }
+zhl() { zsh -l "$@"; }
+zhs() { zsh --login "$@"; }
+zha() { alias "$@"; }
+zhf() { functions "$@"; }
+
+# fish
+fh() { fish "$@"; }
+fhv() { fish --version; }
+fhi() { fish -i "$@"; }
+fhc() { fish -c "$@"; }
+fhr() { source "$@"; }
+fhx() { fish --debug="$@"; }
+fhl() { fish -l "$@"; }
+fhs() { fish --login "$@"; }
+fha() { alias "$@"; }
+fhf() { functions "$@"; }
+
+# vim
+vm() { vim "$@"; }
+vme() { vim -e "$@"; }
+vmx() { vim -x "$@"; }
+vmi() { vim -i "$@"; }
+vms() { vim -s "$@"; }
+vml() { vim -l "$@"; }
+vmc() { vim -c "$@"; }
+vmd() { vimdiff "$@"; }
+vmm() { view "$@"; }
+vma() { gvim "$@"; }
+
+# nano
+nn() { nano "$@"; }
+nni() { nano -i "$@"; }
+nns() { nano -S "$@"; }
+nnw() { nano -w "$@"; }
+nnc() { nano -c "$@"; }
+nnt() { nano -T "$@"; }
+nnv() { nano --version; }
+nnd() { nano -d "$@"; }
+nnf() { nano -F "$@"; }
+nnl() { nano -l "$@"; }
+
+# neovim
+nv() { nvim "$@"; }
+nvi() { nvim -i "$@"; }
+nvs() { nvim -s "$@"; }
+nvx() { nvim -x "$@"; }
+nvl() { nvim -l "$@"; }
+nvc() { nvim -c "$@"; }
+nvd() { nvimdiff "$@"; }
+nvv() { nvim --version; }
+nvm() { view "$@"; }
+nva() { nvim +"$@"; }
+
+# emacs
+em() { emacs "$@"; }
+emi() { emacs -i "$@"; }
+emx() { emacs -Q "$@"; }
+emv() { emacs --version; }
+emf() { emacs --funcall "$@"; }
+emc() { emacs -batch -l "$@"; }
+ems() { emacs -script "$@"; }
+eml() { emacs -nw "$@"; }
+ema() { emacs -daemon "$@"; }
+emd() { emacsclient "$@"; }
+
+# git
+gi() { git "$@"; }
+gic() { git clone "$@"; }
+gis() { git status "$@"; }
+gia() { git add "$@"; }
+gicm() { git commit -m "$@"; }
+gip() { git push "$@"; }
+gif() { git fetch "$@"; }
+gipm() { git pull "$@"; }
+gib() { git branch "$@"; }
+gico() { git checkout "$@"; }
+
+# git-lfs
+glf() { git lfs "$@"; }
+glfi() { git lfs install "$@"; }
+glfp() { git lfs pull "$@"; }
+glfpush() { git lfs push "$@"; }
+glfstatus() { git lfs status "$@"; }
+glftrack() { git lfs track "$@"; }
+glfuntrack() { git lfs untrack "$@"; }
+glfls() { git lfs ls-files "$@"; }
+glffetch() { git lfs fetch "$@"; }
+glfclone() { git lfs clone "$@"; }
+
+# curl
+cu() { curl "$@"; }
+cuv() { curl --version; }
+cui() { curl -I "$@"; }
+cux() { curl -X "$@"; }
+cup() { curl -P "$@"; }
+cuh() { curl -H "$@"; }
+cuo() { curl -O "$@"; }
+cuol() { curl -OL "$@"; }
+cuL() { curl -L "$@"; }
+cuf() { curl -F "$@"; }
+
+# wget
+wg() { wget "$@"; }
+wgv() { wget --version; }
+wgi() { wget -i "$@"; }
+wgc() { wget -c "$@"; }
+wgp() { wget -P "$@"; }
+wgn() { wget -N "$@"; }
+wgl() { wget -L "$@"; }
+wgu() { wget --user="$1" --password="$2" "$3"; }
+wgo() { wget -O "$@"; }
+wgd() { wget -r -np "$@"; }
+
+# unzip
+un() { unzip "$@"; }
+unu() { unzip -u "$@"; }
+unl() { unzip -l "$@"; }
+unx() { unzip -x "$@"; }
+unv() { unzip -v; }
+unc() { unzip -c "$@"; }
+unt() { unzip -t "$@"; }
+unuq() { unzip -q "$@"; }
+unp() { unzip -p "$@"; }
+unf() { unzip -F "$@"; }
+
+# zip
+zp() { zip "$@"; }
+zpu() { zip -u "$@"; }
+zpl() { zip -l "$@"; }
+zpx() { zip -x "$@"; }
+zpv() { zip -v; }
+zpf() { zip -F "$@"; }
+zpt() { zip -T "$@"; }
+zpc() { zip -c "$@"; }
+zpr() { zip -r "$@"; }
+zpn() { zip -n "$@"; }
+
+# tar
+tr() { tar "$@"; }
+trx() { tar -xvf "$@"; }
+trc() { tar -cvf "$@"; }
+trt() { tar -tf "$@"; }
+trz() { tar -czf "$@"; }
+tru() { tar -xzf "$@"; }
+trj() { tar -xjf "$@"; }
+trxv() { tar -xvzf "$@"; }
+trv() { tar -v "$@"; }
+trf() { tar -f "$@"; }
+
+# gzip
+gz() { gzip "$@"; }
+gzd() { gzip -d "$@"; }
+gzt() { gzip -t "$@"; }
+gzv() { gzip --version; }
+gzc() { gzip -c "$@"; }
+gzl() { gzip -l "$@"; }
+gzk() { gzip -k "$@"; }
+gzf() { gzip -f "$@"; }
+gzu() { gunzip "$@"; }
+gzx() { gzip -x "$@"; }
+
+# bzip2
+bz() { bzip2 "$@"; }
+bzd() { bzip2 -d "$@"; }
+bzt() { bzip2 -t "$@"; }
+bzv() { bzip2 --version; }
+bzc() { bzip2 -c "$@"; }
+bzk() { bzip2 -k "$@"; }
+bzf() { bzip2 -f "$@"; }
+bzu() { bunzip2 "$@"; }
+bzx() { bzip2 -x "$@"; }
+bzl() { bzip2 -l "$@"; }
+
+# xz-utils
+xz() { xz "$@"; }
+xzd() { xz -d "$@"; }
+xzt() { xz -t "$@"; }
+xzv() { xz --version; }
+xzc() { xz -c "$@"; }
+xzk() { xz -k "$@"; }
+xzf() { xz -f "$@"; }
+xzu() { unxz "$@"; }
+xzl() { xz -l "$@"; }
+xzx() { xz -x "$@"; }
+
+# htop
+ht() { htop "$@"; }
+htv() { htop --version; }
+hti() { htop -d "$@"; }
+hts() { htop -s "$@"; }
+htc() { htop -C "$@"; }
+htu() { htop -u "$@"; }
+htf() { htop -f "$@"; }
+htl() { htop -l "$@"; }
+htm() { htop -m "$@"; }
+htr() { htop -r "$@"; }
+
+# ncdu
+nd() { ncdu "$@"; }
+ndv() { ncdu --version; }
+ndx() { ncdu -x "$@"; }
+ndq() { ncdu -q "$@"; }
+ndr() { ncdu -r "$@"; }
+ndf() { ncdu -f "$@"; }
+ndl() { ncdu -l "$@"; }
+ndu() { ncdu -u "$@"; }
+nds() { ncdu -s "$@"; }
+ndt() { ncdu -t "$@"; }
+
+# tree
+trt() { tree "$@"; }
+trtv() { tree --version; }
+trtl() { tree -L "$@"; }
+trta() { tree -a "$@"; }
+trtc() { tree -C "$@"; }
+trtf() { tree -f "$@"; }
+trtp() { tree -P "$@"; }
+trtx() { tree -x "$@"; }
+trtd() { tree -d "$@"; }
+trts() { tree -s "$@"; }
+
+# lsof
+lsf() { lsof "$@"; }
+lsfv() { lsof -v; }
+lsfi() { lsof -i "$@"; }
+lsft() { lsof -t "$@"; }
+lsfn() { lsof -n "$@"; }
+lsfp() { lsof -p "$@"; }
+lsfu() { lsof -u "$@"; }
+lsfd() { lsof -d "$@"; }
+lsfc() { lsof -c "$@"; }
+lsfl() { lsof -l "$@"; }
+
+# net-tools
+nt() { ifconfig "$@"; }
+ntv() { ifconfig --version; }
+nti() { ifconfig -a "$@"; }
+ntr() { route "$@"; }
+ntrv() { route -v "$@"; }
+ntp() { netstat -p "$@"; }
+nts() { netstat -s "$@"; }
+ntc() { netstat -c "$@"; }
+ntl() { netstat -l "$@"; }
+ntu() { netstat -u "$@"; }
+
+# iproute2
+ipr() { ip "$@"; }
+iprv() { ip -V; }
+ipra() { ip addr "$@"; }
+iprli() { ip link "$@"; }
+iprr() { ip route "$@"; }
+iprne() { ip neighbor "$@"; }
+iprns() { ip netns "$@"; }
+iprml() { ip maddr "$@"; }
+iprt() { ip tuntap "$@"; }
+iprti() { ip tunnel "$@"; }
+
+# iputils-ping
+pingf() { ping "$@"; }
+pingv() { ping -V; }
+pingc() { ping -c "$@"; }
+pingi() { ping -i "$@"; }
+pingt() { ping -t "$@"; }
+pingW() { ping -W "$@"; }
+pings() { ping -s "$@"; }
+pingl() { ping -l "$@"; }
+pingp() { ping -p "$@"; }
+pingf6() { ping6 "$@"; }
+
+# traceroute
+trc() { traceroute "$@"; }
+trcv() { traceroute -V; }
+trci() { traceroute -i "$@"; }
+trcp() { traceroute -p "$@"; }
+trcl() { traceroute -l "$@"; }
+trcu() { traceroute -u "$@"; }
+trct() { traceroute -T "$@"; }
+trcf() { traceroute -f "$@"; }
+trcw() { traceroute -w "$@"; }
+trcm() { traceroute -m "$@"; }
+
+# sed
+sd() { sed "$@"; }
+sdv() { sed --version; }
+sdi() { sed -i "$@"; }
+sde() { sed -e "$@"; }
+sdf() { sed -f "$@"; }
+sds() { sed -s "$@"; }
+sdc() { sed -c "$@"; }
+sdp() { sed -n "$@"; }
+sdr() { sed -r "$@"; }
+sdb() { sed -b "$@"; }
+
+# gawk
+ga() { gawk "$@"; }
+gav() { gawk --version; }
+gai() { gawk -i "$@"; }
+gae() { gawk -f "$@"; }
+gaf() { gawk -f "$@"; }
+gas() { gawk -s "$@"; }
+gac() { gawk -c "$@"; }
+gap() { gawk -p "$@"; }
+gar() { gawk -r "$@"; }
+gax() { gawk -x "$@"; }
+
+# diffutils
+dfu() { diff "$@"; }
+dfuv() { diff --version; }
+dfuc() { diff -c "$@"; }
+dfun() { diff -u "$@"; }
+dfud() { diff -d "$@"; }
+dfub() { diff -b "$@"; }
+dfw() { diff -w "$@"; }
+dfiq() { diff -i "$@"; }
+dfy() { diff --side-by-side "$@"; }
+dfq() { diff -q "$@"; }
+
+# patch
+pt() { patch "$@"; }
+ptv() { patch --version; }
+pti() { patch -i "$@"; }
+ptR() { patch -R "$@"; }
+pto() { patch -o "$@"; }
+ptb() { patch -b "$@"; }
+ptN() { patch -N "$@"; }
+ptp() { patch --dry-run "$@"; }
+pts() { patch --strip "$@"; }
+ptl() { patch -l "$@"; }
+
+# rsync
+rs() { rsync "$@"; }
+rsv() { rsync --version; }
+rsi() { rsync -i "$@"; }
+rsa() { rsync -a "$@"; }
+rsr() { rsync -r "$@"; }
+rsp() { rsync -P "$@"; }
+rsl() { rsync -l "$@"; }
+rsd() { rsync -d "$@"; }
+rsz() { rsync -z "$@"; }
+rss() { rsync -s "$@"; }
+
+# build-essential
+be() { make "$@"; }
+bev() { dpkg -s build-essential; }
+bec() { gcc "$@"; }
+beb() { g++ "$@"; }
+bebv() { g++ --version; }
+bem() { make -f "$@"; }
+beu() { update-alternatives "$@"; }
+bea() { autoconf "$@"; }
+bebld() { automake "$@"; }
+becm() { cmake "$@"; }
+
+# make
+mk() { make "$@"; }
+mkv() { make --version; }
+mki() { make -i "$@"; }
+mks() { make -s "$@"; }
+mkf() { make -f "$@"; }
+mkl() { make -l "$@"; }
+mkB() { make -B "$@"; }
+mku() { make -u "$@"; }
+mka() { make all "$@"; }
+mkt() { make test "$@"; }
+
+# cmake
+cm() { cmake "$@"; }
+cmv() { cmake --version; }
+cmi() { cmake -i "$@"; }
+cma() { cmake -A "$@"; }
+cmt() { cmake -T "$@"; }
+cmf() { cmake -F "$@"; }
+cmm() { cmake -M "$@"; }
+cmo() { cmake -O "$@"; }
+cml() { cmake -L "$@"; }
+cmp() { cmake --build "$@"; }
+
+# automake
+am() { automake "$@"; }
+amv() { automake --version; }
+ami() { automake -i "$@"; }
+amf() { automake -f "$@"; }
+amA() { automake -a "$@"; }
+amL() { automake -l "$@"; }
+amc() { automake -c "$@"; }
+amD() { automake -d "$@"; }
+amP() { automake -p "$@"; }
+ams() { automake -s "$@"; }
+
+# autoconf
+ac() { autoconf "$@"; }
+acv() { autoconf --version; }
+aci() { autoconf -i "$@"; }
+acf() { autoconf -f "$@"; }
+aca() { autoconf -a "$@"; }
+acl() { autoconf -l "$@"; }
+acc() { autoconf -c "$@"; }
+acm() { autoconf -m "$@"; }
+acp() { autoconf -p "$@"; }
+acs() { autoconf -s "$@"; }
+
+# pkg-config
+pkg() { pkg-config "$@"; }
+pkgv() { pkg-config --version; }
+pkgi() { pkg-config --cflags "$@"; }
+pkgl() { pkg-config --libs "$@"; }
+pkgm() { pkg-config --modversion "$@"; }
+pkgn() { pkg-config --exists "$@"; }
+pkgp() { pkg-config --print-errors "$@"; }
+pkgs() { pkg-config --static "$@"; }
+pkgt() { pkg-config --atleast-version "$@"; }
+pkga() { pkg-config --atleast-private "$@"; }
 
 
 # python functions
