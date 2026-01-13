@@ -1,0 +1,567 @@
+# Colors & styles
+BOLD="\[\e[1m\]"
+RESET_BOLD="\[\e[22m\]"
+RED="\[\e[31m\]"
+GREEN="\[\e[32m\]"
+BLUE="\[\e[34m\]"
+BRIGHT_BLUE="\[\e[94m\]"
+YELLOW="\[\e[33m\]"
+RESET_COLOR="\[\e[0m\]"
+RESET="\[\e[0m\]"
+CYAN="\[\e[36m\]"
+ORANGE="\[\e[38;5;214m\]"
+NEONYELLOW="\[\e[38;5;227m\]"
+# regular fucking varibales
+
+VERSION="1.2.4x"
+DISTRO="$(. /etc/os-release && echo "$PRETTY_NAME")"
+# Helper Functions
+cpth() {
+    echo "${BOLD}${BLUE}\w${RESET_COLOR}${RESET_BOLD}"
+}
+
+
+
+
+git_branch() {
+    local branch
+    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
+    if [ -n "$branch" ]; then
+        [ ${#branch} -gt 15 ] && branch="${branch:0:12}…"
+        echo " \[\e[33m\](${branch})\[\e[0m\]"  # note the space is inside
+    fi
+}
+
+venv_prompt() {
+    if [ -n "$VIRTUAL_ENV" ]; then
+        echo " \[\e[32m\]($(basename "$VIRTUAL_ENV"))\[\e[0m\]"  # space inside
+    fi
+}
+
+
+username_prompt() {
+    if [ "$EUID" -eq 0 ]; then
+        # Red color: \e[31m, bold: \e[1m
+        echo "\[\e[1;31m\]root|\u\[\e[0m\]"
+    else
+        echo "\u"
+    fi
+}
+
+
+
+# Prompt
+
+# Prompt
+
+export PS1="${BOLD}${RED}[${ORANGE}@$(username_prompt)${RESET_COLOR}${RED}${BOLD}]${RESET} : ${BOLD}${GREEN}YelloCake${RESET}${NEONYELLOW} ➤ ${BOLD}${CYAN}${DISTRO}${RESET_COLOR} ${BOLD}$(cpth)${BOLD}$(git_branch)${BOLD}$(venv_prompt) ${RED}${BOLD}❮~❯ ${NEONYELLOW}✦${RESET} "
+
+
+
+
+# Welcome message (interactive shells only)
+
+if [[ $- == *i* ]]; then
+    echo -e "\e[1m\e[32mWelcome to YelloCake \e[33mv${VERSION}\e[0m"
+fi
+
+# Aliases
+
+alias lr='ls -r'
+alias ct='cat'
+alias n='nano'
+alias v='vim'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias p3='python3'
+alias p='sudo apt update'
+alias cl='clear'
+alias ycrc='nano ~/.yellocake'
+alias hm='cd $HOME'
+alias pwd='echo $PWD'
+alias mem='free -h'
+alias disk='df -h'
+alias ip='curl ipconfig.me'
+alias top='htop'
+alias psg='ps aux | grep'
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit -m'
+alias gp='git push'
+alias gf='git push --force'
+alias gl='git log --oneline --graph --decorate'
+alias gco='git checkout'
+alias tm='date +"%T"'
+alias dat='date +"%Y-%m-%d"'
+alias tmp='vcgencmd measure_temp'
+alias h='history'
+alias rd='rmdir'
+alias md='mkdir -p'
+alias spc='du -sh *'
+alias big='ls -lhS | head'
+alias f='find . -name'
+alias ff='find . -type f -name'
+alias please='sudo !!'
+alias t='tree -C -L 2'
+alias k9='kill -9'
+alias vew='less'
+
+
+# Functions
+
+
+# python functions
+pips() {
+    pip show "$@"
+}
+pist() {
+    pip install "$@"
+}
+
+pup() {
+    pip upgrade "$@"
+}
+
+pun() {
+    pip uninstall "$@"
+}
+
+pfre() {
+    pip freeze
+}
+
+pychk() { python3 -c "import $1; print('$1 is installed')" 2>/dev/null || echo "$1 not installed"; }
+
+mdlst() {
+    python3 - <<END
+import sys
+modules = sorted(sys.modules.keys())
+for m in modules:
+    print(f"\033[1;36m{m}\033[0m", end="  ")  # cyan color
+print()
+END
+}
+
+hst() { python -m http.server "$@"; } 
+
+py() {
+    if command -v python3 >/dev/null 2>&1; then
+        python3
+    else
+        echo -e "Python 3 is not installed!\nWould you like to download Python? (y/n)"
+        read -r response
+        if [[ "$response" == "y" || "$response" == "Y" ]]; then
+            if [ "$EUID" -eq 0 ]; then  
+                apt install python3 -y
+                echo -e "${BOLD}${GREEN}✔${RESET} Python 3 installed successfully."
+                python3 --version
+                python3
+            else
+                sudo apt install python3 -y
+                echo -e "${BOLD}${GREEN}✔${RESET} Python 3 installed successfully."
+            fi
+        else
+            echo -e "${RED}${BOLD}✗${RESET} Python installation aborted."
+        fi
+    fi
+}
+
+# apt functions
+
+ist() {
+    if [ "$EUID" -eq 0 ]; then
+        apt install "$@"
+    else
+        sudo apt install "$@"
+    fi
+}
+
+r()   { sudo apt remove "$@"; }
+
+u()   { sudo apt update; }
+
+#file system functions
+
+bd() { cd ..; }
+
+tch() { # create file and optionally edit with -n flag
+    edit=false
+    for arg in "$@"; do
+        [ "$arg" = "-n" ] && edit=true || file="$arg"
+    done
+    [ -z "$file" ] && { echo "Usage: mytouch <file> [-n]"; return 1; }
+    touch "$file"
+    $edit && nano "$file"
+}
+
+mcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+cod() {
+    touch "$1" && nano "$1"
+}
+
+er() {
+    if [ -f "$1" ]; then
+        grep -i "error" "$1" || echo "No errors found in $1"
+    else
+        echo "File not found!"
+    fi
+}
+
+spy() {
+    if [ -f "$1" ]; then
+        while IFS= read -r line; do
+            echo "$line"
+            sleep 0.05
+        done < "$1"
+    else
+        echo "File not found!"
+    fi
+}
+
+bkup() {
+    cp "$1" "${1}.bak"
+    echo "Backup created: ${1}.bak"
+}
+
+fcd() {
+    # Add folder if -a flag is used
+    if [ "$1" = "-a" ] && [ -n "$2" ]; then
+        echo "$2" >> "$HOME/.YelloCake_folds"
+        echo "Added $2 to favorites."
+        return
+    fi
+
+    # No argument: list all folders
+    if [ -z "$1" ]; then
+        cat "$HOME/.YelloCake_folds"
+        return
+    fi
+
+    # Jump to folder by name match
+    local target
+    target=$(grep -i "$1" "$HOME/.YelloCake_folds" | head -n1)
+    if [ -n "$target" ]; then
+        cd "$target" || echo "Failed to cd to $target"
+    else
+        echo "No folder matching '$1' found."
+    fi
+}
+
+_fcd_completions() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=($(compgen -W "$(cat "$HOME/.YelloCake_folds" | xargs -n1 basename)" -- "$cur"))
+}
+
+complete -F _fcd_completions fcd
+
+fpwd() {
+    local dir="$PWD"
+    if [ -z "$dir" ]; then
+        echo "Usage: fav_add <folder_path>"
+        return 1
+    fi
+
+    if [ ! -d "$dir" ]; then
+        echo "Directory '$dir' does not exist!"
+        return 1
+    fi
+
+    # Make sure favorites file exists
+    FAV_FILE="$HOME/.YelloCake_folds"
+    touch "$FAV_FILE"
+
+    # Avoid duplicates
+    if grep -qxF "$dir" "$FAV_FILE"; then
+        echo "'$dir' is already in favorites."
+    else
+        echo "$dir" >> "$FAV_FILE"
+        echo "Added '$dir' to favorites."
+    fi
+}
+fav() {
+    local dir="$1"
+    if [ -z "$dir" ]; then
+        echo "Usage: fav <folder_path>"
+        return 1
+    fi
+
+    if [ ! -d "$dir" ]; then
+        echo "Directory '$dir' does not exist"
+        return 1
+    fi
+
+    # Make sure favorites file exists
+    FAV_FILE="$HOME/.YelloCake_folds"
+    touch "$FAV_FILE"
+
+    # Avoid duplicates
+    if grep -qxF "$dir" "$FAV_FILE"; then
+        echo "'$dir' is already in favorites."
+    else
+        echo "$dir" >> "$FAV_FILE"
+        echo "Added '$dir' to favorites."
+    fi
+}
+
+favlst() {
+    FAV_FILE="$HOME/.YelloCake_folds"
+    if [ ! -f "$FAV_FILE" ]; then
+        echo "No favorites found."
+        return
+    fi
+
+    echo "Favorite Folders:"
+    nl -w2 -s'. ' "$FAV_FILE"
+}
+
+
+
+
+
+# http/network functions
+
+sprt() {
+    HOST="$1"
+    START="$2"
+    END="$3"
+    OUTFILE="$4"
+
+    if [ -z "$HOST" ] || [ -z "$START" ] || [ -z "$END" ] || [ -z "$OUTFILE" ]; then
+        echo "Usage: sprt <host> <start_port> <end_port> <output_file>"
+        return 1
+    fi
+
+    # Run scan in a subshell in the background
+    (
+        echo "Starting background port scan of $HOST ($START-$END)..." > "$OUTFILE"
+        echo "Results will be written to: $OUTFILE"
+
+        MAX_JOBS=200  # tune this
+
+        _yc_probe_port() {
+            PORT=$1
+            (echo > /dev/tcp/"$HOST"/"$PORT") >/dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                echo "OPEN: $PORT" >> "$OUTFILE"
+            fi
+        }
+
+        CURRENT_JOBS=0
+        for ((p=START; p<=END; p++)); do
+            _yc_probe_port "$p" &
+
+            ((CURRENT_JOBS++))
+            if [ "$CURRENT_JOBS" -ge "$MAX_JOBS" ]; then
+                wait
+                CURRENT_JOBS=0
+            fi
+        done
+
+        wait
+        echo "Scan complete." >> "$OUTFILE"
+    ) &
+
+    echo "Port scan running in background. You can continue using your terminal."
+}
+
+up() {
+    if [ -z "$1" ]; then
+        echo "Usage: up <url>"
+        return 1
+    fi
+
+    if curl -s --head --fail "$1" >/dev/null 2>&1; then
+        echo "$1 up ✓"
+    else
+        echo "$1 down ✗"
+    fi
+}
+
+
+wthr() {
+    curl -s "https://wttr.in/${1:-}" | head -n 7
+}
+
+myip() {
+    curl -s https://ipinfo.io | grep -E 'ip|city|region|country|org'
+}
+
+uptime() { uptime -p; }
+
+sz() {
+    du -sh "$@" 2>/dev/null
+}
+
+png() {
+    for host in "$@"; do
+        echo "Pinging $host..."
+        ping -c 2 "$host"
+    done
+}
+
+prt() {
+    sudo netstat -tulnp | grep LISTEN
+}
+
+nfo() {
+
+    if [ "$OS_NAME" = "Linux" ] || [ "$OS_NAME" = "Darwin" ]; then
+        echo "Interfaces:"
+        ip addr show 2>/dev/null || ifconfig
+
+        echo -e "\nDefault Gateway:"
+        ip route 2>/dev/null | grep default || netstat -rn | grep default
+
+        echo -e "\nDNS Servers:"
+        grep 'nameserver' /etc/resolv.conf
+
+        echo -e "\nPublic IP:"
+        curl -s https://ipinfo.io/ip
+    else
+        echo "Network info not supported for $OS_NAME"
+    fi
+}
+
+
+# system functions
+
+ram() {
+    ps aux --sort=-%mem | head -n 10
+}
+
+cpu() {
+    ps aux --sort=-%cpu | head -n 10
+}
+
+extr() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.gz) tar xzf "$1" ;;
+            *.tar.bz2) tar xjf "$1" ;;
+            *.tar.xz) tar xf "$1" ;;
+            *.zip) unzip "$1" ;;
+            *.rar) unrar x "$1" ;;
+            *.7z) 7z x "$1" ;;
+            *) echo "extractfile: Cannot extract '$1'" ;;
+        esac
+    else
+        echo "extractfile: '$1' is not a valid file"
+    fi
+}
+
+dsk() {
+    echo "Storage Usage:"
+    df -h --total -x tmpfs -x devtmpfs | awk '
+    BEGIN { total=0; used=0; avail=0; }
+    /^Filesystem/ { next }
+    /total/ { print "Total: " $2 "\tUsed: " $3 "\tAvailable: " $4; exit }
+    '
+}
+
+# YelloCake update function
+
+yup() {
+    local version="${1:-}"   # optional: install a specific version
+
+    echo "Updating APT index..."
+    if sudo apt update; then
+        echo "✔ APT index updated"
+    else
+        echo "✗ Failed to update APT index"
+        return 1
+    fi
+
+    if [ -n "$version" ]; then
+        echo "Installing YelloCake version $version..."
+        if sudo apt install -y "yellocake=$version"; then
+            echo "✔ YelloCake updated to version $version"
+        else
+            echo "✗ Failed to install YelloCake version $version"
+            return 1
+        fi
+    else
+        echo "Installing latest version of YelloCake..."
+        if sudo apt install -y yellocake; then
+            echo "✔ YelloCake updated to the latest version"
+        else
+            echo "✗ Failed to update YelloCake"
+            return 1
+        fi
+    fi
+
+    echo -n "Current installed YelloCake version: "
+    dpkg-query -W -f='${Version}\n' yellocake 2>/dev/null && echo "✔ Done" || echo "✗ YelloCake not installed"
+    exec bash  # restart shell to apply changes
+}
+
+yver() {
+    echo "YelloCake v$VERSION"
+}
+
+yclr() {
+    tput sgr0
+    clear
+}
+
+ycapt() {
+    local pkg="$1"
+    local version="$2"
+
+    if [ -z "$pkg" ] || [ -z "$version" ]; then
+        echo "Usage: ycapt <package> <version>"
+        return 1
+    fi
+
+    local REPO_DIR="$HOME/my_yellocake_debs"
+    local BASE_URL="https://camwuzhere.github.io/YelloCake/debs"
+
+    mkdir -p "$REPO_DIR"
+
+    # Construct filename exactly like your repo
+    local deb="${pkg}_${version}_all.deb"
+    local url="$BASE_URL/$deb"
+
+    # Download if missing
+    if [ ! -f "$REPO_DIR/$deb" ]; then
+        echo "Downloading $deb ..."
+        if ! curl -L --fail -o "$REPO_DIR/$deb" "$url"; then
+            echo "ERROR: Could not download $url"
+            return 1
+        fi
+        echo "✔ Downloaded"
+    else
+        echo "✔ Using cached $deb"
+    fi
+
+    # Regenerate Packages.gz
+    echo "Regenerating Packages.gz..."
+    ( cd "$REPO_DIR" && dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz )
+    echo "✔ Packages.gz created"
+
+    # Install using apt
+    echo "Installing $pkg=$version ..."
+    sudo apt update
+    if ! sudo apt install -y "yellocake_1.1.8_all.deb"; then
+        echo "ERROR: apt could not install ${pkg}=${version}"
+        return 1
+    fi
+
+    echo "✔ Installed ${pkg} ${version}"
+}
+yccurl() {
+    local pkg="$1"
+    local version="$2"
+    local base="https://camwuzhere.github.io/YelloCake/debs"
+
+    if [ -z "$pkg" ] || [ -z "$version" ]; then
+        echo "Usage: yccurl <package> <version>"
+        return 1
+    fi
+
+    curl -L -O "$base/${pkg}_${version}_all.deb"
+}
