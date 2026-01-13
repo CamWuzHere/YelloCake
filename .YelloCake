@@ -54,7 +54,18 @@ username_prompt() {
 
 # Prompt
 
-export PS1="${BOLD}${RED}[${ORANGE}@$(username_prompt)${RESET_COLOR}${RED}${BOLD}]${RESET} : ${BOLD}${GREEN}YelloCake${RESET}${NEONYELLOW} ➤ ${BOLD}${CYAN}${DISTRO}${RESET_COLOR} ${BOLD}$(cpth)${BOLD}$(git_branch)${BOLD}$(venv_prompt) ${RED}${BOLD}❮~❯ ${NEONYELLOW}✦${RESET} "
+# Function to set the color for the prompt symbol
+prompt_symbol_color() {
+    if [ "$USER" = "root" ]; then
+        echo "\[\e[32m\]"   # green for root
+    else
+        echo "\[\e[31m\]"   # red for normal user
+    fi
+}
+
+# Then update your PS1 where the symbol is
+export PS1="${BOLD}${RED}[${ORANGE}@$(username_prompt)${RESET_COLOR}${RED}${BOLD}]${RESET} : ${BOLD}${GREEN}YelloCake${RESET}${NEONYELLOW} ➤ ${BOLD}${CYAN}${DISTRO}${RESET_COLOR} ${BOLD}$(cpth)${BOLD}$(git_branch)${BOLD}$(venv_prompt) $(prompt_symbol_color)❮~❯${RESET} ${NEONYELLOW}✦${RESET} "
+
 
 
 
