@@ -13,7 +13,7 @@ ORANGE="\[\e[38;5;214m\]"
 NEONYELLOW="\[\e[38;5;227m\]"
 # regular fucking varibales
 
-VERSION="1.2.5x"
+VERSION="1.2.7a"
 DISTRO="$(. /etc/os-release && echo "$PRETTY_NAME")"
 # Helper Functions
 cpth() {
