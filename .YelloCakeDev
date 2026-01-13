@@ -11,73 +11,55 @@ RESET="\[\e[0m\]"
 CYAN="\[\e[36m\]"
 ORANGE="\[\e[38;5;214m\]"
 NEONYELLOW="\[\e[38;5;227m\]"
-# regular fucking varibales
 
+# regular fucking varibales
 VERSION="1.2.7a"
 DISTRO="$(. /etc/os-release && echo "$PRETTY_NAME")"
+
 # Helper Functions
 cpth() {
     echo "${BOLD}${BLUE}\w${RESET_COLOR}${RESET_BOLD}"
 }
 
-
-
-
 git_branch() {
     local branch
     branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
     if [ -n "$branch" ]; then
-        [ ${#branch} -gt 15 ] && branch="${branch:0:12}…"
-        echo " \[\e[33m\](${branch})\[\e[0m\]"  # note the space is inside
+        [ "${#branch}" -gt 15 ] && branch="${branch:0:12}…"
+        echo " \[\e[33m\](${branch})\[\e[0m\]"
     fi
 }
 
 venv_prompt() {
     if [ -n "$VIRTUAL_ENV" ]; then
-        echo " \[\e[32m\]($(basename "$VIRTUAL_ENV"))\[\e[0m\]"  # space inside
+        echo " \[\e[32m\]($(basename "$VIRTUAL_ENV"))\[\e[0m\]"
     fi
 }
 
-
 username_prompt() {
     if [ "$EUID" -eq 0 ]; then
-        # Red color: \e[31m, bold: \e[1m
         echo "\[\e[1;31m\]root|\u\[\e[0m\]"
     else
         echo "\u"
     fi
 }
 
-
-
-# Prompt
-
-# Prompt
-
-# Function to set the color for the prompt symbol
 prompt_symbol_color() {
     if [ "$USER" = "root" ]; then
-        echo "\[\e[32m\]❮*❯"   # green for root
+        echo "\[\e[32m\]❮*❯"
     else
-        echo "\[\e[31m\]❮~❯"   # red for normal user
+        echo "\[\e[31m\]❮~❯"
     fi
 }
 
-# Then update your PS1 where the symbol is
-export PS1="${BOLD}${RED}[${ORANGE}@$(username_prompt)${RESET_COLOR}${RED}${BOLD}]${RESET} : ${BOLD}${GREEN}YelloCake${RESET}${NEONYELLOW} ➤ ${BOLD}${CYAN}${DISTRO}${RESET_COLOR} ${BOLD}$(cpth)${BOLD}$(git_branch)${BOLD}$(venv_prompt) $(prompt_symbol_color)❮~❯${RESET} ${NEONYELLOW}✦${RESET} "
-
-
-
-
+export PS1="${BOLD}${RED}[${ORANGE}@$(username_prompt)${RESET_COLOR}${RED}${BOLD}]${RESET} : ${BOLD}${GREEN}YelloCake${RESET}${NEONYELLOW} ➤ ${BOLD}${CYAN}${DISTRO}${RESET_COLOR} ${BOLD}$(cpth)${BOLD}$(git_branch)${BOLD}$(venv_prompt) $(prompt_symbol_color)${RESET} ${NEONYELLOW}✦${RESET} "
 
 # Welcome message (interactive shells only)
-
 if [[ $- == *i* ]]; then
     echo -e "\e[1m\e[32mWelcome to YelloCake \e[33mv${VERSION}\e[0m"
 fi
 
 # Aliases
-
 alias lr='ls -r'
 alias ct='cat'
 alias n='nano'
@@ -119,9 +101,7 @@ alias t='tree -C -L 2'
 alias k9='kill -9'
 alias vew='less'
 
-
-# Functions
-# bash
+# Bash functions
 bs() { bash "$@"; }
 bsv() { bash --version; }
 bsi() { bash -i "$@"; }
@@ -133,7 +113,7 @@ bss() { bash --login "$@"; }
 bsa() { alias "$@"; }
 bsh() { help "$@"; }
 
-# zsh
+# zsh functions
 zh() { zsh "$@"; }
 zhv() { zsh --version; }
 zhi() { zsh -i "$@"; }
@@ -145,7 +125,7 @@ zhs() { zsh --login "$@"; }
 zha() { alias "$@"; }
 zhf() { functions "$@"; }
 
-# fish
+# fish functions
 fh() { fish "$@"; }
 fhv() { fish --version; }
 fhi() { fish -i "$@"; }
@@ -157,7 +137,7 @@ fhs() { fish --login "$@"; }
 fha() { alias "$@"; }
 fhf() { functions "$@"; }
 
-# vim
+# vim functions
 vm() { vim "$@"; }
 vme() { vim -e "$@"; }
 vmx() { vim -x "$@"; }
@@ -169,7 +149,7 @@ vmd() { vimdiff "$@"; }
 vmm() { view "$@"; }
 vma() { gvim "$@"; }
 
-# nano
+# nano functions
 nn() { nano "$@"; }
 nni() { nano -i "$@"; }
 nns() { nano -S "$@"; }
@@ -181,7 +161,7 @@ nnd() { nano -d "$@"; }
 nnf() { nano -F "$@"; }
 nnl() { nano -l "$@"; }
 
-# neovim
+# neovim functions
 nv() { nvim "$@"; }
 nvi() { nvim -i "$@"; }
 nvs() { nvim -s "$@"; }
@@ -193,7 +173,7 @@ nvv() { nvim --version; }
 nvm() { view "$@"; }
 nva() { nvim +"$@"; }
 
-# emacs
+# emacs functions
 em() { emacs "$@"; }
 emi() { emacs -i "$@"; }
 emx() { emacs -Q "$@"; }
@@ -205,7 +185,7 @@ eml() { emacs -nw "$@"; }
 ema() { emacs -daemon "$@"; }
 emd() { emacsclient "$@"; }
 
-# git
+# git functions
 gi() { git "$@"; }
 gic() { git clone "$@"; }
 gis() { git status "$@"; }
@@ -217,7 +197,7 @@ gipm() { git pull "$@"; }
 gib() { git branch "$@"; }
 gico() { git checkout "$@"; }
 
-# git-lfs
+# git-lfs functions
 glf() { git lfs "$@"; }
 glfi() { git lfs install "$@"; }
 glfp() { git lfs pull "$@"; }
@@ -229,7 +209,7 @@ glfls() { git lfs ls-files "$@"; }
 glffetch() { git lfs fetch "$@"; }
 glfclone() { git lfs clone "$@"; }
 
-# curl
+# curl functions
 cu() { curl "$@"; }
 cuv() { curl --version; }
 cui() { curl -I "$@"; }
@@ -241,7 +221,7 @@ cuol() { curl -OL "$@"; }
 cuL() { curl -L "$@"; }
 cuf() { curl -F "$@"; }
 
-# wget
+# wget functions
 wg() { wget "$@"; }
 wgv() { wget --version; }
 wgi() { wget -i "$@"; }
@@ -253,7 +233,7 @@ wgu() { wget --user="$1" --password="$2" "$3"; }
 wgo() { wget -O "$@"; }
 wgd() { wget -r -np "$@"; }
 
-# unzip
+# unzip functions
 un() { unzip "$@"; }
 unu() { unzip -u "$@"; }
 unl() { unzip -l "$@"; }
@@ -265,7 +245,7 @@ unuq() { unzip -q "$@"; }
 unp() { unzip -p "$@"; }
 unf() { unzip -F "$@"; }
 
-# zip
+# zip functions
 zp() { zip "$@"; }
 zpu() { zip -u "$@"; }
 zpl() { zip -l "$@"; }
@@ -277,7 +257,7 @@ zpc() { zip -c "$@"; }
 zpr() { zip -r "$@"; }
 zpn() { zip -n "$@"; }
 
-# tar
+# tar functions
 tr() { tar "$@"; }
 trx() { tar -xvf "$@"; }
 trc() { tar -cvf "$@"; }
@@ -289,7 +269,7 @@ trxv() { tar -xvzf "$@"; }
 trv() { tar -v "$@"; }
 trf() { tar -f "$@"; }
 
-# gzip
+# gzip functions
 gz() { gzip "$@"; }
 gzd() { gzip -d "$@"; }
 gzt() { gzip -t "$@"; }
@@ -301,7 +281,7 @@ gzf() { gzip -f "$@"; }
 gzu() { gunzip "$@"; }
 gzx() { gzip -x "$@"; }
 
-# bzip2
+# bzip2 functions
 bz() { bzip2 "$@"; }
 bzd() { bzip2 -d "$@"; }
 bzt() { bzip2 -t "$@"; }
@@ -313,7 +293,7 @@ bzu() { bunzip2 "$@"; }
 bzx() { bzip2 -x "$@"; }
 bzl() { bzip2 -l "$@"; }
 
-# xz-utils
+# xz-utils functions
 xz() { xz "$@"; }
 xzd() { xz -d "$@"; }
 xzt() { xz -t "$@"; }
@@ -325,7 +305,7 @@ xzu() { unxz "$@"; }
 xzl() { xz -l "$@"; }
 xzx() { xz -x "$@"; }
 
-# htop
+# htop functions
 ht() { htop "$@"; }
 htv() { htop --version; }
 hti() { htop -d "$@"; }
@@ -337,7 +317,7 @@ htl() { htop -l "$@"; }
 htm() { htop -m "$@"; }
 htr() { htop -r "$@"; }
 
-# ncdu
+# ncdu functions
 nd() { ncdu "$@"; }
 ndv() { ncdu --version; }
 ndx() { ncdu -x "$@"; }
@@ -349,7 +329,7 @@ ndu() { ncdu -u "$@"; }
 nds() { ncdu -s "$@"; }
 ndt() { ncdu -t "$@"; }
 
-# tree
+# tree functions
 trt() { tree "$@"; }
 trtv() { tree --version; }
 trtl() { tree -L "$@"; }
@@ -361,7 +341,7 @@ trtx() { tree -x "$@"; }
 trtd() { tree -d "$@"; }
 trts() { tree -s "$@"; }
 
-# lsof
+# lsof functions
 lsf() { lsof "$@"; }
 lsfv() { lsof -v; }
 lsfi() { lsof -i "$@"; }
@@ -373,19 +353,7 @@ lsfd() { lsof -d "$@"; }
 lsfc() { lsof -c "$@"; }
 lsfl() { lsof -l "$@"; }
 
-# net-tools
-nt() { ifconfig "$@"; }
-ntv() { ifconfig --version; }
-nti() { ifconfig -a "$@"; }
-ntr() { route "$@"; }
-ntrv() { route -v "$@"; }
-ntp() { netstat -p "$@"; }
-nts() { netstat -s "$@"; }
-ntc() { netstat -c "$@"; }
-ntl() { netstat -l "$@"; }
-ntu() { netstat -u "$@"; }
-
-# iproute2
+# iproute2 / networking / http functions
 ipr() { ip "$@"; }
 iprv() { ip -V; }
 ipra() { ip addr "$@"; }
@@ -397,7 +365,6 @@ iprml() { ip maddr "$@"; }
 iprt() { ip tuntap "$@"; }
 iprti() { ip tunnel "$@"; }
 
-# iputils-ping
 pingf() { ping "$@"; }
 pingv() { ping -V; }
 pingc() { ping -c "$@"; }
@@ -408,364 +375,6 @@ pings() { ping -s "$@"; }
 pingl() { ping -l "$@"; }
 pingp() { ping -p "$@"; }
 pingf6() { ping6 "$@"; }
-
-# traceroute
-trc() { traceroute "$@"; }
-trcv() { traceroute -V; }
-trci() { traceroute -i "$@"; }
-trcp() { traceroute -p "$@"; }
-trcl() { traceroute -l "$@"; }
-trcu() { traceroute -u "$@"; }
-trct() { traceroute -T "$@"; }
-trcf() { traceroute -f "$@"; }
-trcw() { traceroute -w "$@"; }
-trcm() { traceroute -m "$@"; }
-
-# sed
-sd() { sed "$@"; }
-sdv() { sed --version; }
-sdi() { sed -i "$@"; }
-sde() { sed -e "$@"; }
-sdf() { sed -f "$@"; }
-sds() { sed -s "$@"; }
-sdc() { sed -c "$@"; }
-sdp() { sed -n "$@"; }
-sdr() { sed -r "$@"; }
-sdb() { sed -b "$@"; }
-
-# gawk
-ga() { gawk "$@"; }
-gav() { gawk --version; }
-gai() { gawk -i "$@"; }
-gae() { gawk -f "$@"; }
-gaf() { gawk -f "$@"; }
-gas() { gawk -s "$@"; }
-gac() { gawk -c "$@"; }
-gap() { gawk -p "$@"; }
-gar() { gawk -r "$@"; }
-gax() { gawk -x "$@"; }
-
-# diffutils
-dfu() { diff "$@"; }
-dfuv() { diff --version; }
-dfuc() { diff -c "$@"; }
-dfun() { diff -u "$@"; }
-dfud() { diff -d "$@"; }
-dfub() { diff -b "$@"; }
-dfw() { diff -w "$@"; }
-dfiq() { diff -i "$@"; }
-dfy() { diff --side-by-side "$@"; }
-dfq() { diff -q "$@"; }
-
-# patch
-pt() { patch "$@"; }
-ptv() { patch --version; }
-pti() { patch -i "$@"; }
-ptR() { patch -R "$@"; }
-pto() { patch -o "$@"; }
-ptb() { patch -b "$@"; }
-ptN() { patch -N "$@"; }
-ptp() { patch --dry-run "$@"; }
-pts() { patch --strip "$@"; }
-ptl() { patch -l "$@"; }
-
-# rsync
-rs() { rsync "$@"; }
-rsv() { rsync --version; }
-rsi() { rsync -i "$@"; }
-rsa() { rsync -a "$@"; }
-rsr() { rsync -r "$@"; }
-rsp() { rsync -P "$@"; }
-rsl() { rsync -l "$@"; }
-rsd() { rsync -d "$@"; }
-rsz() { rsync -z "$@"; }
-rss() { rsync -s "$@"; }
-
-# build-essential
-be() { make "$@"; }
-bev() { dpkg -s build-essential; }
-bec() { gcc "$@"; }
-beb() { g++ "$@"; }
-bebv() { g++ --version; }
-bem() { make -f "$@"; }
-beu() { update-alternatives "$@"; }
-bea() { autoconf "$@"; }
-bebld() { automake "$@"; }
-becm() { cmake "$@"; }
-
-# make
-mk() { make "$@"; }
-mkv() { make --version; }
-mki() { make -i "$@"; }
-mks() { make -s "$@"; }
-mkf() { make -f "$@"; }
-mkl() { make -l "$@"; }
-mkB() { make -B "$@"; }
-mku() { make -u "$@"; }
-mka() { make all "$@"; }
-mkt() { make test "$@"; }
-
-# cmake
-cm() { cmake "$@"; }
-cmv() { cmake --version; }
-cmi() { cmake -i "$@"; }
-cma() { cmake -A "$@"; }
-cmt() { cmake -T "$@"; }
-cmf() { cmake -F "$@"; }
-cmm() { cmake -M "$@"; }
-cmo() { cmake -O "$@"; }
-cml() { cmake -L "$@"; }
-cmp() { cmake --build "$@"; }
-
-# automake
-am() { automake "$@"; }
-amv() { automake --version; }
-ami() { automake -i "$@"; }
-amf() { automake -f "$@"; }
-amA() { automake -a "$@"; }
-amL() { automake -l "$@"; }
-amc() { automake -c "$@"; }
-amD() { automake -d "$@"; }
-amP() { automake -p "$@"; }
-ams() { automake -s "$@"; }
-
-# autoconf
-ac() { autoconf "$@"; }
-acv() { autoconf --version; }
-aci() { autoconf -i "$@"; }
-acf() { autoconf -f "$@"; }
-aca() { autoconf -a "$@"; }
-acl() { autoconf -l "$@"; }
-acc() { autoconf -c "$@"; }
-acm() { autoconf -m "$@"; }
-acp() { autoconf -p "$@"; }
-acs() { autoconf -s "$@"; }
-
-# pkg-config
-pkg() { pkg-config "$@"; }
-pkgv() { pkg-config --version; }
-pkgi() { pkg-config --cflags "$@"; }
-pkgl() { pkg-config --libs "$@"; }
-pkgm() { pkg-config --modversion "$@"; }
-pkgn() { pkg-config --exists "$@"; }
-pkgp() { pkg-config --print-errors "$@"; }
-pkgs() { pkg-config --static "$@"; }
-pkgt() { pkg-config --atleast-version "$@"; }
-pkga() { pkg-config --atleast-private "$@"; }
-
-
-# python functions
-pips() {
-    pip show "$@"
-}
-pist() {
-    pip install "$@"
-}
-
-pup() {
-    pip upgrade "$@"
-}
-
-pun() {
-    pip uninstall "$@"
-}
-
-pfre() {
-    pip freeze
-}
-
-pychk() { python3 -c "import $1; print('$1 is installed')" 2>/dev/null || echo "$1 not installed"; }
-
-mdlst() {
-    python3 - <<END
-import sys
-modules = sorted(sys.modules.keys())
-for m in modules:
-    print(f"\033[1;36m{m}\033[0m", end="  ")  # cyan color
-print()
-END
-}
-
-hst() { python -m http.server "$@"; } 
-
-py() {
-    if command -v python3 >/dev/null 2>&1; then
-        python3
-    else
-        echo -e "Python 3 is not installed!\nWould you like to download Python? (y/n)"
-        read -r response
-        if [[ "$response" == "y" || "$response" == "Y" ]]; then
-            if [ "$EUID" -eq 0 ]; then  
-                apt install python3 -y
-                echo -e "${BOLD}${GREEN}✔${RESET} Python 3 installed successfully."
-                python3 --version
-                python3
-            else
-                sudo apt install python3 -y
-                echo -e "${BOLD}${GREEN}✔${RESET} Python 3 installed successfully."
-            fi
-        else
-            echo -e "${RED}${BOLD}✗${RESET} Python installation aborted."
-        fi
-    fi
-}
-
-# apt functions
-
-ist() {
-    if [ "$EUID" -eq 0 ]; then
-        apt install "$@"
-    else
-        sudo apt install "$@"
-    fi
-}
-
-r()   { sudo apt remove "$@"; }
-
-u()   { sudo apt update; }
-
-#file system functions
-
-bd() { cd ..; }
-
-tch() { # create file and optionally edit with -n flag
-    edit=false
-    for arg in "$@"; do
-        [ "$arg" = "-n" ] && edit=true || file="$arg"
-    done
-    [ -z "$file" ] && { echo "Usage: mytouch <file> [-n]"; return 1; }
-    touch "$file"
-    $edit && nano "$file"
-}
-
-mcd() {
-    mkdir -p "$1" && cd "$1"
-}
-
-cod() {
-    touch "$1" && nano "$1"
-}
-
-er() {
-    if [ -f "$1" ]; then
-        grep -i "error" "$1" || echo "No errors found in $1"
-    else
-        echo "File not found!"
-    fi
-}
-
-spy() {
-    if [ -f "$1" ]; then
-        while IFS= read -r line; do
-            echo "$line"
-            sleep 0.05
-        done < "$1"
-    else
-        echo "File not found!"
-    fi
-}
-
-bkup() {
-    cp "$1" "${1}.bak"
-    echo "Backup created: ${1}.bak"
-}
-
-fcd() {
-    # Add folder if -a flag is used
-    if [ "$1" = "-a" ] && [ -n "$2" ]; then
-        echo "$2" >> "$HOME/.YelloCake_folds"
-        echo "Added $2 to favorites."
-        return
-    fi
-
-    # No argument: list all folders
-    if [ -z "$1" ]; then
-        cat "$HOME/.YelloCake_folds"
-        return
-    fi
-
-    # Jump to folder by name match
-    local target
-    target=$(grep -i "$1" "$HOME/.YelloCake_folds" | head -n1)
-    if [ -n "$target" ]; then
-        cd "$target" || echo "Failed to cd to $target"
-    else
-        echo "No folder matching '$1' found."
-    fi
-}
-
-_fcd_completions() {
-    local cur="${COMP_WORDS[COMP_CWORD]}"
-    COMPREPLY=($(compgen -W "$(cat "$HOME/.YelloCake_folds" | xargs -n1 basename)" -- "$cur"))
-}
-
-complete -F _fcd_completions fcd
-
-fpwd() {
-    local dir="$PWD"
-    if [ -z "$dir" ]; then
-        echo "Usage: fav_add <folder_path>"
-        return 1
-    fi
-
-    if [ ! -d "$dir" ]; then
-        echo "Directory '$dir' does not exist!"
-        return 1
-    fi
-
-    # Make sure favorites file exists
-    FAV_FILE="$HOME/.YelloCake_folds"
-    touch "$FAV_FILE"
-
-    # Avoid duplicates
-    if grep -qxF "$dir" "$FAV_FILE"; then
-        echo "'$dir' is already in favorites."
-    else
-        echo "$dir" >> "$FAV_FILE"
-        echo "Added '$dir' to favorites."
-    fi
-}
-fav() {
-    local dir="$1"
-    if [ -z "$dir" ]; then
-        echo "Usage: fav <folder_path>"
-        return 1
-    fi
-
-    if [ ! -d "$dir" ]; then
-        echo "Directory '$dir' does not exist"
-        return 1
-    fi
-
-    # Make sure favorites file exists
-    FAV_FILE="$HOME/.YelloCake_folds"
-    touch "$FAV_FILE"
-
-    # Avoid duplicates
-    if grep -qxF "$dir" "$FAV_FILE"; then
-        echo "'$dir' is already in favorites."
-    else
-        echo "$dir" >> "$FAV_FILE"
-        echo "Added '$dir' to favorites."
-    fi
-}
-
-favlst() {
-    FAV_FILE="$HOME/.YelloCake_folds"
-    if [ ! -f "$FAV_FILE" ]; then
-        echo "No favorites found."
-        return
-    fi
-
-    echo "Favorite Folders:"
-    nl -w2 -s'. ' "$FAV_FILE"
-}
-
-
-
-
-
-# http/network functions
 
 sprt() {
     HOST="$1"
@@ -778,12 +387,11 @@ sprt() {
         return 1
     fi
 
-    # Run scan in a subshell in the background
     (
         echo "Starting background port scan of $HOST ($START-$END)..." > "$OUTFILE"
         echo "Results will be written to: $OUTFILE"
 
-        MAX_JOBS=200  # tune this
+        MAX_JOBS=200
 
         _yc_probe_port() {
             PORT=$1
@@ -824,7 +432,6 @@ up() {
     fi
 }
 
-
 wthr() {
     curl -s "https://wttr.in/${1:-}" | head -n 7
 }
@@ -835,119 +442,17 @@ myip() {
 
 uptime() { uptime -p; }
 
-sz() {
-    du -sh "$@" 2>/dev/null
-}
+sz() { du -sh "$@" 2>/dev/null; }
 
 png() {
     for host in "$@"; do
         echo "Pinging $host..."
-        ping -c 2 "$host"
+        ping -c 5 "$host"
     done
 }
 
-prt() {
-    sudo netstat -tulnp | grep LISTEN
-}
-
-nfo() {
-
-    if [ "$OS_NAME" = "Linux" ] || [ "$OS_NAME" = "Darwin" ]; then
-        echo "Interfaces:"
-        ip addr show 2>/dev/null || ifconfig
-
-        echo -e "\nDefault Gateway:"
-        ip route 2>/dev/null | grep default || netstat -rn | grep default
-
-        echo -e "\nDNS Servers:"
-        grep 'nameserver' /etc/resolv.conf
-
-        echo -e "\nPublic IP:"
-        curl -s https://ipinfo.io/ip
-    else
-        echo "Network info not supported for $OS_NAME"
-    fi
-}
-
-
-# system functions
-
-ram() {
-    ps aux --sort=-%mem | head -n 10
-}
-
-cpu() {
-    ps aux --sort=-%cpu | head -n 10
-}
-
-extr() {
-    if [ -f "$1" ]; then
-        case "$1" in
-            *.tar.gz) tar xzf "$1" ;;
-            *.tar.bz2) tar xjf "$1" ;;
-            *.tar.xz) tar xf "$1" ;;
-            *.zip) unzip "$1" ;;
-            *.rar) unrar x "$1" ;;
-            *.7z) 7z x "$1" ;;
-            *) echo "extractfile: Cannot extract '$1'" ;;
-        esac
-    else
-        echo "extractfile: '$1' is not a valid file"
-    fi
-}
-
-dsk() {
-    echo "Storage Usage:"
-    df -h --total -x tmpfs -x devtmpfs | awk '
-    BEGIN { total=0; used=0; avail=0; }
-    /^Filesystem/ { next }
-    /total/ { print "Total: " $2 "\tUsed: " $3 "\tAvailable: " $4; exit }
-    '
-}
-
-# YelloCake update function
-
-yup() {
-    local version="${1:-}"   # optional: install a specific version
-
-    echo "Updating APT index..."
-    if sudo apt update; then
-        echo "✔ APT index updated"
-    else
-        echo "✗ Failed to update APT index"
-        return 1
-    fi
-
-    if [ -n "$version" ]; then
-        echo "Installing YelloCake version $version..."
-        if sudo apt install -y "yellocake=$version"; then
-            echo "✔ YelloCake updated to version $version"
-        else
-            echo "✗ Failed to install YelloCake version $version"
-            return 1
-        fi
-    else
-        echo "Installing latest version of YelloCake..."
-        if sudo apt install -y yellocake; then
-            echo "✔ YelloCake updated to the latest version"
-        else
-            echo "✗ Failed to update YelloCake"
-            return 1
-        fi
-    fi
-
-    echo -n "Current installed YelloCake version: "
-    dpkg-query -W -f='${Version}\n' yellocake 2>/dev/null && echo "✔ Done" || echo "✗ YelloCake not installed"
-    exec bash  # restart shell to apply changes
-}
-
-yver() {
-    echo "YelloCake v$VERSION"
-}
-
-yclr() {
-    tput sgr0
-    clear
+pup() {
+    pip install --upgrade "$@"
 }
 
 ycapt() {
@@ -964,11 +469,9 @@ ycapt() {
 
     mkdir -p "$REPO_DIR"
 
-    # Construct filename exactly like your repo
     local deb="${pkg}_${version}_all.deb"
     local url="$BASE_URL/$deb"
 
-    # Download if missing
     if [ ! -f "$REPO_DIR/$deb" ]; then
         echo "Downloading $deb ..."
         if ! curl -L --fail -o "$REPO_DIR/$deb" "$url"; then
@@ -980,30 +483,16 @@ ycapt() {
         echo "✔ Using cached $deb"
     fi
 
-    # Regenerate Packages.gz
     echo "Regenerating Packages.gz..."
     ( cd "$REPO_DIR" && dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz )
     echo "✔ Packages.gz created"
 
-    # Install using apt
     echo "Installing $pkg=$version ..."
     sudo apt update
-    if ! sudo apt install -y "yellocake_1.1.8_all.deb"; then
+    if ! sudo apt install -y "yellocake_${version}_all.deb"; then
         echo "ERROR: apt could not install ${pkg}=${version}"
         return 1
     fi
 
     echo "✔ Installed ${pkg} ${version}"
-}
-yccurl() {
-    local pkg="$1"
-    local version="$2"
-    local base="https://camwuzhere.github.io/YelloCake/debs"
-
-    if [ -z "$pkg" ] || [ -z "$version" ]; then
-        echo "Usage: yccurl <package> <version>"
-        return 1
-    fi
-
-    curl -L -O "$base/${pkg}_${version}_all.deb"
 }
