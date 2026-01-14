@@ -101,6 +101,16 @@ alias t='tree -C -L 2'
 alias k9='kill -9'
 alias vew='less'
 
+bd() {
+    local count=${1:-1}   # default to 1 if no argument
+    for ((i=0; i<count; i++)); do
+        cd ..
+    done
+}
+
+#===================
+#   here starts the chatgpt madness of one-line functions that i was too lazy to code
+#===================
 # Bash functions
 bs() { bash "$@"; }
 bsv() { bash --version; }
@@ -365,79 +375,206 @@ iprml() { ip maddr "$@"; }
 iprt() { ip tuntap "$@"; }
 iprti() { ip tunnel "$@"; }
 
-pingf() { ping "$@"; }
-pingv() { ping -V; }
-pingc() { ping -c "$@"; }
-pingi() { ping -i "$@"; }
-pingt() { ping -t "$@"; }
-pingW() { ping -W "$@"; }
-pings() { ping -s "$@"; }
-pingl() { ping -l "$@"; }
-pingp() { ping -p "$@"; }
-pingf6() { ping6 "$@"; }
+pf() { ping "$@"; }
+pv() { ping -V; }
+pc() { ping -c "$@"; }
+pi() { ping -i "$@"; }
+pt() { ping -t "$@"; }
+pw() { ping -W "$@"; }
+ps() { ping -s "$@"; }
+pl() { ping -l "$@"; }
+pp() { ping -p "$@"; }
+p6() { ping6 "$@"; }
+#===========================
+# chatgpt bullshit ends here. if you have any complaints, consult openai
+# if, however, you have complaints about following code... fuck off ig
+#===========================
+
 
 # Add this to your ~/.YelloCake or ~/.bashrc
-ist() {
-    if [ $# -eq 0 ]; then
-        echo "Usage: ist $*"
-        return 1
-    fi
+# if you add to ~/.YelloCake, then this won't work unless you source ~/.YelloCake in your ~/.bashrc file
 
-    # Try installing without sudo first
-    if apt install -y "$@"; then
-        echo "✔ Installed $*"
+# Functions
+
+
+# python functions
+pips() {
+    pip show "$@"
+}
+pist() {
+    pip install "$@"
+}
+
+pup() {
+    pip upgrade "$@"
+}
+
+pun() {
+    pip uninstall "$@"
+}
+
+pfre() {
+    pip freeze
+}
+
+pychk() { python3 -c "import $1; print('$1 is installed')" 2>/dev/null || echo "$1 not installed"; }
+
+ist() { # fuck
+    if sudo apt install "$@"; then
+        echo "$@ installed as $USER"
     else
-        if sudo apt install -y "$@"; then
-            echo "✔ Installed $* with sudo"
-        else
-            echo "✘ Failed to install $*"
-            return 1
-        fi
+        echo "Failed to install $@ ✗
+        Retrying with sudo"
+        if sudo apt install "$@"; then
+            echo  "$@ installed correctly as sudo ✓"
     fi
 }
 
-sprt() {
-    HOST="$1"
-    START="$2"
-    END="$3"
-    OUTFILE="$4"
+r()   { sudo apt remove "$@"; }
 
-    if [ -z "$HOST" ] || [ -z "$START" ] || [ -z "$END" ] || [ -z "$OUTFILE" ]; then
-        echo "Usage: sprt <host> <start_port> <end_port> <output_file>"
+u()   { sudo apt update; }
+
+#file system functions
+
+
+tch() { # create file and optionally edit with -n flag
+    edit=false
+    for arg in "$@"; do
+        [ "$arg" = "-n" ] && edit=true || file="$arg"
+    done
+    [ -z "$file" ] && { echo "Usage: mytouch <file> [-n]"; return 1; }
+    touch "$file"
+    $edit && nano "$file"
+}
+
+mcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+cod() {
+    touch "$1" && nano "$1"
+}
+
+er() {
+    if [ -f "$1" ]; then
+        grep -i "error" "$1" || echo "No errors found in $1"
+    else
+        echo "File not found!"
+    fi
+}
+
+spy() {
+    if [ -f "$1" ]; then
+        while IFS= read -r line; do
+            echo "$line"
+            sleep 0.05
+        done < "$1"
+    else
+        echo "File not found!"
+    fi
+}
+
+bkup() {
+    cp "$1" "${1}.bak"
+    echo "Backup created: ${1}.bak"
+}
+
+fcd() {
+    # Add folder if -a flag is used
+    if [ "$1" = "-a" ] && [ -n "$2" ]; then
+        echo "$2" >> "$HOME/.YelloCake_folds"
+        echo "Added $2 to favorites."
+        return
+    fi
+
+    # No argument: list all folders
+    if [ -z "$1" ]; then
+        cat "$HOME/.YelloCake_folds"
+        return
+    fi
+
+    # Jump to folder by name match
+    local target
+    target=$(grep -i "$1" "$HOME/.YelloCake_folds" | head -n1)
+    if [ -n "$target" ]; then
+        cd "$target" || echo "Failed to cd to $target"
+    else
+        echo "No folder matching '$1' found."
+    fi
+}
+
+_fcd_completions() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=($(compgen -W "$(cat "$HOME/.YelloCake_folds" | xargs -n1 basename)" -- "$cur"))
+}
+
+complete -F _fcd_completions fcd
+
+fpwd() {
+    local dir="$PWD"
+    if [ -z "$dir" ]; then
+        echo "Usage: fav_add <folder_path>"
         return 1
     fi
 
-    (
-        echo "Starting background port scan of $HOST ($START-$END)..." > "$OUTFILE"
-        echo "Results will be written to: $OUTFILE"
+    if [ ! -d "$dir" ]; then
+        echo "Directory '$dir' does not exist!"
+        return 1
+    fi
 
-        MAX_JOBS=200
+    # Make sure favorites file exists
+    FAV_FILE="$HOME/.YelloCake_folds"
+    touch "$FAV_FILE"
 
-        _yc_probe_port() {
-            PORT=$1
-            (echo > /dev/tcp/"$HOST"/"$PORT") >/dev/null 2>&1
-            if [ $? -eq 0 ]; then
-                echo "OPEN: $PORT" >> "$OUTFILE"
-            fi
-        }
-
-        CURRENT_JOBS=0
-        for ((p=START; p<=END; p++)); do
-            _yc_probe_port "$p" &
-
-            ((CURRENT_JOBS++))
-            if [ "$CURRENT_JOBS" -ge "$MAX_JOBS" ]; then
-                wait
-                CURRENT_JOBS=0
-            fi
-        done
-
-        wait
-        echo "Scan complete." >> "$OUTFILE"
-    ) &
-
-    echo "Port scan running in background. You can continue using your terminal."
+    # Avoid duplicates
+    if grep -qxF "$dir" "$FAV_FILE"; then
+        echo "'$dir' is already in favorites."
+    else
+        echo "$dir" >> "$FAV_FILE"
+        echo "Added '$dir' to favorites."
+    fi
 }
+fav() {
+    local dir="$1"
+    if [ -z "$dir" ]; then
+        echo "Usage: fav <folder_path>"
+        return 1
+    fi
+
+    if [ ! -d "$dir" ]; then
+        echo "Directory '$dir' does not exist"
+        return 1
+    fi
+
+    # Make sure favorites file exists
+    FAV_FILE="$HOME/.YelloCake_folds"
+    touch "$FAV_FILE"
+
+    # Avoid duplicates
+    if grep -qxF "$dir" "$FAV_FILE"; then
+        echo "'$dir' is already in favorites."
+    else
+        echo "$dir" >> "$FAV_FILE"
+        echo "Added '$dir' to favorites."
+    fi
+}
+
+favlst() {
+    FAV_FILE="$HOME/.YelloCake_folds"
+    if [ ! -f "$FAV_FILE" ]; then
+        echo "No favorites found."
+        return
+    fi
+
+    echo "Favorite Folders:"
+    nl -w2 -s'. ' "$FAV_FILE"
+}
+
+
+
+
+
+# http/network functions
 
 up() {
     if [ -z "$1" ]; then
@@ -452,6 +589,7 @@ up() {
     fi
 }
 
+
 wthr() {
     curl -s "https://wttr.in/${1:-}" | head -n 7
 }
@@ -462,57 +600,84 @@ myip() {
 
 uptime() { uptime -p; }
 
-sz() { du -sh "$@" 2>/dev/null; }
+sz() {
+    du -sh "$@" 2>/dev/null
+}
 
 png() {
     for host in "$@"; do
         echo "Pinging $host..."
-        ping -c 5 "$host"
+        ping -c 2 "$host"
     done
 }
 
-pup() {
-    pip install --upgrade "$@"
+prt() {
+    sudo netstat -tulnp | grep LISTEN
 }
 
-ycapt() {
-    local pkg="$1"
-    local version="$2"
+nfo() {
 
-    if [ -z "$pkg" ] || [ -z "$version" ]; then
-        echo "Usage: ycapt <package> <version>"
-        return 1
-    fi
+    if [ "$OS_NAME" = "Linux" ] || [ "$OS_NAME" = "Darwin" ]; then
+        echo "Interfaces:"
+        ip addr show 2>/dev/null || ifconfig
 
-    local REPO_DIR="$HOME/my_yellocake_debs"
-    local BASE_URL="https://camwuzhere.github.io/YelloCake/debs"
+        echo -e "\nDefault Gateway:"
+        ip route 2>/dev/null | grep default || netstat -rn | grep default
 
-    mkdir -p "$REPO_DIR"
+        echo -e "\nDNS Servers:"
+        grep 'nameserver' /etc/resolv.conf
 
-    local deb="${pkg}_${version}_all.deb"
-    local url="$BASE_URL/$deb"
-
-    if [ ! -f "$REPO_DIR/$deb" ]; then
-        echo "Downloading $deb ..."
-        if ! curl -L --fail -o "$REPO_DIR/$deb" "$url"; then
-            echo "ERROR: Could not download $url"
-            return 1
-        fi
-        echo "✔ Downloaded"
+        echo -e "\nPublic IP:"
+        curl -s https://ipinfo.io/ip
     else
-        echo "✔ Using cached $deb"
+        echo "Network info not supported for $OS_NAME"
     fi
+}
 
-    echo "Regenerating Packages.gz..."
-    ( cd "$REPO_DIR" && dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz )
-    echo "✔ Packages.gz created"
 
-    echo "Installing $pkg=$version ..."
-    sudo apt update
-    if ! sudo apt install -y "yellocake_${version}_all.deb"; then
-        echo "ERROR: apt could not install ${pkg}=${version}"
-        return 1
+# system functions
+
+ram() {
+    ps aux --sort=-%mem | head -n 10
+}
+
+cpu() {
+    ps aux --sort=-%cpu | head -n 10
+}
+
+extr() {
+    inst=""
+    for pkg in tar bzip2 xz unzip rar unrar p7zip-full gzip lzip; do
+        if command -v $pkg &>/dev/null; then
+            echo "$pkg ✓ installed"
+        else
+            echo "$pkg ✗ missing"
+            inst="$inst $pkg"
+        fi
+    done
+    sudo apt install $inst
+    inst=""
+    if [ -f "$1" ]; then
+
+        case "$1" in
+            *.tar.gz) tar xzf "$1" ;;
+            *.tar.bz2) tar xjf "$1" ;;
+            *.tar.xz) tar xf "$1" ;;
+            *.zip) unzip "$1" ;;
+            *.rar) unrar x "$1" ;;
+            *.7z) 7z x "$1" ;;
+            *) echo "extractfile: Cannot extract '$1'" ;;
+        esac
+    else
+        echo "extractfile: '$1' is not a valid file"
     fi
+}
 
-    echo "✔ Installed ${pkg} ${version}"
+dsk() {
+    echo "Storage Usage:"
+    df -h --total -x tmpfs -x devtmpfs | awk '
+    BEGIN { total=0; used=0; avail=0; }
+    /^Filesystem/ { next }
+    /total/ { print "Total: " $2 "\tUsed: " $3 "\tAvailable: " $4; exit }
+    '
 }
