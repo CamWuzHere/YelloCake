@@ -11,3 +11,5 @@ if curl -sSL https://raw.githubusercontent.com/CamWuzHere/YelloCake/main/.YelloC
 else
     echo "Error downloading .YelloCakeDev"
 fi
+
+exec bash
