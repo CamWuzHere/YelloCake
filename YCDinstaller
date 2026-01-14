@@ -2,7 +2,7 @@
 if curl -sSL https://raw.githubusercontent.com/CamWuzHere/YelloCake/main/.YelloCakeDev -o ~/.YelloCakeDev; then
     echo "Downloaded .YelloCakeDev successfully"
     if ! grep -Fxq "source ~/.YelloCakeDev" ~/.bashrc; then
-        echo "source ~/.YelloCakeDev" >> ~/.bashrc
+        echo "\nsource ~/.YelloCakeDev" >> ~/.bashrc
         echo "Added source to ~/.bashrc"
     fi
     if [ "$(basename "$SHELL")" != "bash" ]; then
