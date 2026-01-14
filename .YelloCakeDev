@@ -376,6 +376,26 @@ pingl() { ping -l "$@"; }
 pingp() { ping -p "$@"; }
 pingf6() { ping6 "$@"; }
 
+# Add this to your ~/.YelloCake or ~/.bashrc
+ist() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: ist $*"
+        return 1
+    fi
+
+    # Try installing without sudo first
+    if apt install -y "$@"; then
+        echo "✔ Installed $*"
+    else
+        if sudo apt install -y "$@"; then
+            echo "✔ Installed $* with sudo"
+        else
+            echo "✘ Failed to install $*"
+            return 1
+        fi
+    fi
+}
+
 sprt() {
     HOST="$1"
     START="$2"
