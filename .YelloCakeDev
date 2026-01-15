@@ -419,14 +419,17 @@ pfre() {
 
 pychk() { python3 -c "import $1; print('$1 is installed')" 2>/dev/null || echo "$1 not installed"; }
 
-ist() { # fuck
+ist() { # installs packages with retry as sudo
     if sudo apt install "$@"; then
-        echo "$@ installed as $USER"
+        echo "$@ installed as $USER ✓"
     else
-        echo "Failed to install $@ ✗
-        Retrying with sudo"
+        echo "Failed to install $@ ✗"
+        echo "Retrying with sudo..."
         if sudo apt install "$@"; then
-            echo  "$@ installed correctly as sudo ✓"
+            echo "$@ installed correctly as sudo ✓"
+        else
+            echo "Failed to install $@ even with sudo ✗"
+        fi
     fi
 }
 
